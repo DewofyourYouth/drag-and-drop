@@ -1,5 +1,6 @@
 const sortableList = document.getElementById("sortable");
 let draggedItem = null;
+let listNames;
 
 sortableList.addEventListener("dragend", (e) => {
   setTimeout(() => {
@@ -28,7 +29,9 @@ sortableList.addEventListener("dragover", (e) => {
 const showItems = () =>
   fetch("/list").then((res) => {
     res.json().then((items) => {
-      appendListItemsToList(items, sortableList);
+      listNames = Object.keys(items);
+      const itemsList = Object.entries(items).flat((depth = 2));
+      appendListItemsToList(itemsList, sortableList);
       sortableList.addEventListener("dragstart", (e) => {
         draggedItem = e.target;
         setTimeout(() => {
@@ -65,11 +68,29 @@ const getDragAfterElement = (container, y) => {
 function appendListItemsToList(items, sortableList) {
   for (let item of items) {
     const element = document.createElement("li");
+    if (item.includes("tier")) {
+      element.setAttribute("class", "tier-heading");
+    } else {
+      element.setAttribute("draggable", true);
+    }
     element.innerText = item;
-    element.setAttribute("draggable", true);
     sortableList.appendChild(element);
   }
 }
+
+const createNewTierObject = (items) => {
+  const result = {};
+  let currentTier;
+  for (let item of items) {
+    if (listNames.includes(item)) {
+      currentTier = item;
+      result[item] = [];
+    } else {
+      result[currentTier].push(item);
+    }
+  }
+  return result;
+};
 
 const updateListOrder = async (items) =>
   fetch("/list", {
@@ -78,7 +99,7 @@ const updateListOrder = async (items) =>
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(items),
+    body: JSON.stringify(createNewTierObject(items)),
   });
 
 showItems();

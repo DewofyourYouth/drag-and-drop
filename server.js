@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-let list = ["Item 1", "Item 2", "Item 3", "Item 4"];
+let list = { tier1: ["Item 1", "Item 2"], tier2: ["Item 3", "Item 4"] };
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -14,7 +14,7 @@ app.get("/list", (req, res) => {
 
 app.post("/list", (req, res) => {
   list = req.body;
-  res.json(req.body);
+  res.json(list);
 });
 
 app.listen(3000, () => console.log("Listening on port 3000"));
