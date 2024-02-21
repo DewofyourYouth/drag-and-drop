@@ -1,5 +1,4 @@
 const sortableList = document.getElementById("sortable");
-let sortedList = [];
 let draggedItem = null;
 
 sortableList.addEventListener("dragend", (e) => {
@@ -7,12 +6,12 @@ sortableList.addEventListener("dragend", (e) => {
     e.target.style.display = "";
     draggedItem = null;
   }, 0);
-  sortedList = [];
+  const sortedList = [];
   for (let child of sortableList.children) {
     sortedList.push(child.innerHTML);
   }
   items = sortedList;
-  updateListOrder(sortedList).then();
+  updateListOrder(sortedList);
 });
 
 sortableList.addEventListener("dragover", (e) => {
